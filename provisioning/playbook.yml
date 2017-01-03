@@ -661,4 +661,8 @@
       tags: ['ubuntu', 'unity', 'desktop'] 
       action: apt pkg={{item}} state=latest
       with_items:
-        - ubnutu-desktop
+        - ubuntu-desktop
+        - indicator-appmenu
+        - hud
+        - indicator-session
+        - unity-lens-files
