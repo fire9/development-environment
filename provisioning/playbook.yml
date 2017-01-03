@@ -4,19 +4,62 @@
 
   vars:
     x_ansible_download_dir: /usr/local/src/ansible/data
+    dev_user: vagrant 
 
   pre_tasks:
     - name: update apt cache
       apt: update_cache=yes cache_valid_time=86400
 
+    - name: Add '{{dev_user}}' to the sudoers group
+      user:
+        name: "{{dev_user}}"
+        groups: sudo
+        append: yes
+
+    - name: Install build essentials
+      tags: ['build'] 
+      action: apt pkg={{item}} state=latest
+      with_items:
+        - build-essential
+        - git
+
+    - name: Install python tools
+      tags: ['python'] 
+      action: apt pkg={{item}} state=latest
+      with_items:
+        - python
+        - python3
+        - python-pip
+        - python3-pip
+        - python-dev
+        - python3-dev
+
+    - name: Install git tools
+      tags: ['git', 'gitsome'] 
+      action: pip name=gitsome state=latest executable=pip3
+
+    - name: Install python2 modules
+      tags: ['python'] 
+      action: pip name={{item}} state=latest executable=pip2
+      with_items:
+        - virtualenv
+        - matplotlib
+        - numpy
+        - requests
+
+    - name: Install python3 modules
+      tags: ['python'] 
+      action: pip name={{item}} state=latest executable=pip3
+      with_items:
+        - virtualenv
+        - matplotlib
+        - numpy
+        - requests
+
   roles:
     # Preserve the apt cache
     - role: gantsign.apt
       apt_preserve_cache: yes
-
-    # Set system timezone
-    - role: franklinkim.timezone
-      timezone: Europe/London
 
     # Increase the number of files that can be watched.
     # https://confluence.jetbrains.com/display/IDEADEV/Inotify+Watches+Limit
@@ -58,23 +101,10 @@
         - Name bin
         - Name .bin
         - Name node_modules
-      unison_src_root: /home/vagrant
-      unison_mirror_root: /var/persistent/home/vagrant
+      unison_src_root: "/home/{{dev_user}}"
+      unison_mirror_root: "/var/persistent/home/{{dev_user}}"
       unison_fat: no
       unison_service_auto_start: yes
-
-    # Set keyboard layout
-    - role: gantsign.keyboard
-      keyboard_model: pc105
-      keyboard_layout: gb
-
-    # Configure locale
-    - role: tersmitten.locales
-      locales_present:
-        - en_GB.UTF-8
-        - en_US.UTF-8
-      locales_default:
-        lang: en_GB.UTF-8
 
     # Enable compressed RAM swap
     - gantsign.zram-config
@@ -84,6 +114,7 @@
 
     # Install and configure Git version control
     - role: franklinkim.git
+      tags: ['git'] 
       git_config:
         core:
           autocrlf: input
@@ -98,7 +129,7 @@
       tags:
         - docker
       docker_group_members:
-        - vagrant
+        - "{{dev_user}}"
 
     # Install Kubernetes
     - role: gantsign.kubernetes
@@ -137,7 +168,7 @@
       tags:
         - nodejs
       nodejs_version: 6.x
-      nodejs_install_npm_user: vagrant
+      nodejs_install_npm_user: "{{dev_user}}"
       nodejs_npm_global_packages:
         - name: grunt-cli
         - name: grunt-init
@@ -153,7 +184,7 @@
       tags:
         - gui
       audio_users:
-        - vagrant
+        - "{{dev_user}}"
 
     # Install Xfce desktop
     - role: gantsign.xdesktop
@@ -165,7 +196,7 @@
     - role: gantsign.lightdm
       tags:
         - gui
-      lightdm_autologin_user: vagrant
+      lightdm_autologin_user: "{{dev_user}}"
 
     # Configure proxy settings for Gnome applications
     - role: gantsign.gnome-proxy
@@ -173,10 +204,10 @@
         - proxy
         - gui
 
-    # Install Terminator terminal emulator
-    - role: gantsign.terminator
-      tags:
-        - gui
+    # # Install Terminator terminal emulator
+    # - role: gantsign.terminator
+    #   tags:
+    #     - gui
 
     # Install Google Chrome web broswer
     - role: cmprescott.chrome
@@ -211,7 +242,7 @@
         - gui
         - atom
       users:
-        - username: vagrant
+        - username: "{{dev_user}}"
           atom_packages:
             - editorconfig
             - minimap
@@ -221,7 +252,7 @@
           atom_config:
             "*":
               core:
-                projectHome: "/home/vagrant/workspace"
+                projectHome: "/home/{{dev_user}}/workspace"
               editor:
                 showIndentGuide: true
                 showInvisibles: true
@@ -233,125 +264,125 @@
         - atom
         - golang
       users:
-        - username: vagrant
+        - username: "{{dev_user}}"
           atom_packages:
             - go-plus
 
-    # Install Visual Studio Code editor
-    - role: gantsign.visual-studio-code
-      tags:
-        - gui
-        - vscode
-      users:
-        - username: vagrant
-          visual_studio_code_extensions:
-            - EditorConfig.EditorConfig
-            - streetsidesoftware.code-spell-checker
-            - wholroyd.jinja
-            - donjayamanne.python
-            - rebornix.Ruby
-          visual_studio_code_settings: {
-            "editor.rulers": [80, 100, 120],
-            "editor.renderWhitespace": true,
-            "files.associations": {
-              "Vagrantfile": "ruby",
-              ".vagrantuser": "yaml",
-              ".vagrantuser.example": "yaml"
-            }
-          }
+    # # Install Visual Studio Code editor
+    # - role: gantsign.visual-studio-code
+    #   tags:
+    #     - gui
+    #     - vscode
+    #   users:
+    #     - username: "{{dev_user}}"
+    #       visual_studio_code_extensions:
+    #         - EditorConfig.EditorConfig
+    #         - streetsidesoftware.code-spell-checker
+    #         - wholroyd.jinja
+    #         - donjayamanne.python
+    #         - rebornix.Ruby
+    #       visual_studio_code_settings: {
+    #         "editor.rulers": [80, 100, 120],
+    #         "editor.renderWhitespace": true,
+    #         "files.associations": {
+    #           "Vagrantfile": "ruby",
+    #           ".vagrantuser": "yaml",
+    #           ".vagrantuser.example": "yaml"
+    #         }
+    #       }
 
-    # Install Go extension for Visual Studio Code editor
-    - role: gantsign.visual-studio-code-extensions
-      tags:
-        - gui
-        - vscode
-        - golang
-      users:
-        - username: vagrant
-          visual_studio_code_extensions:
-            - lukehoban.Go
+    # # Install Go extension for Visual Studio Code editor
+    # - role: gantsign.visual-studio-code-extensions
+    #   tags:
+    #     - gui
+    #     - vscode
+    #     - golang
+    #   users:
+    #     - username: "{{dev_user}}"
+    #       visual_studio_code_extensions:
+    #         - lukehoban.Go
 
-    # Install and configure IntelliJ IDEA IDE
-    - role: gantsign.intellij
-      tags:
-        - java
-        - gui
-        - intellij
-      intellij_edition: community
-      intellij_jdk_home: "{{ ansible_local.java.general.home }}"
-      intellij_default_maven_home: "{{ ansible_local.maven.general.home }}"
-      users:
-        - username: vagrant
-          intellij_jdks:
-            - name: '1.8'
-              home: "{{ ansible_local.java.general.home }}"
-          intellij_default_jdk: '1.8'
-          intellij_disabled_plugins:
-            - CVS
-            - com.intellij.uiDesigner
-            - org.jetbrains.android
-            - TestNG-J
-            - hg4idea
-            - Subversion
-            - AntSupport
-            - DevKit
-            - ClearcasePlugin
-            - CloudBees
-            - CloudFoundry
-            - Geronimo
-            - GlassFish
-            - Heroku
-            - JBoss
-            - JSR45Plugin
-            - OpenShift
-            - Resin
-            - StrutsAssistant
-            - WebSphere
-            - Weblogic
-            - com.intellij.appengine
-            - com.intellij.aspectj
-            - com.intellij.dmserver
-            - com.intellij.flex
-            - com.intellij.gwt
-            - com.intellij.seam
-            - com.intellij.seam.pageflow
-            - com.intellij.seam.pages
-            - com.intellij.struts2
-            - com.intellij.tapestry
-            - com.intellij.vaadin
-            - com.intellij.velocity
-            - org.coffeescript
-            - org.intellij.grails
-            - org.jetbrains.plugins.haml
-            - org.jetbrains.plugins.stylus
-            - TFS
-            - PerforceDirectPlugin
-          intellij_codestyles:
-            - name: GantSign
-              url: 'https://raw.githubusercontent.com/gantsign/code-style-intellij/1.0.0/GantSign.xml'
-          intellij_active_codestyle: GantSign
-          intellij_plugins:
-            - CheckStyle-IDEA
-            - Lombook Plugin
+    # # Install and configure IntelliJ IDEA IDE
+    # - role: gantsign.intellij
+    #   tags:
+    #     - java
+    #     - gui
+    #     - intellij
+    #   intellij_edition: community
+    #   intellij_jdk_home: "{{ ansible_local.java.general.home }}"
+    #   intellij_default_maven_home: "{{ ansible_local.maven.general.home }}"
+    #   users:
+    #     - username: "{{dev_user}}"
+    #       intellij_jdks:
+    #         - name: '1.8'
+    #           home: "{{ ansible_local.java.general.home }}"
+    #       intellij_default_jdk: '1.8'
+    #       intellij_disabled_plugins:
+    #         - CVS
+    #         - com.intellij.uiDesigner
+    #         - org.jetbrains.android
+    #         - TestNG-J
+    #         - hg4idea
+    #         - Subversion
+    #         - AntSupport
+    #         - DevKit
+    #         - ClearcasePlugin
+    #         - CloudBees
+    #         - CloudFoundry
+    #         - Geronimo
+    #         - GlassFish
+    #         - Heroku
+    #         - JBoss
+    #         - JSR45Plugin
+    #         - OpenShift
+    #         - Resin
+    #         - StrutsAssistant
+    #         - WebSphere
+    #         - Weblogic
+    #         - com.intellij.appengine
+    #         - com.intellij.aspectj
+    #         - com.intellij.dmserver
+    #         - com.intellij.flex
+    #         - com.intellij.gwt
+    #         - com.intellij.seam
+    #         - com.intellij.seam.pageflow
+    #         - com.intellij.seam.pages
+    #         - com.intellij.struts2
+    #         - com.intellij.tapestry
+    #         - com.intellij.vaadin
+    #         - com.intellij.velocity
+    #         - org.coffeescript
+    #         - org.intellij.grails
+    #         - org.jetbrains.plugins.haml
+    #         - org.jetbrains.plugins.stylus
+    #         - TFS
+    #         - PerforceDirectPlugin
+    #       intellij_codestyles:
+    #         - name: GantSign
+    #           url: 'https://raw.githubusercontent.com/gantsign/code-style-intellij/1.0.0/GantSign.xml'
+    #       intellij_active_codestyle: GantSign
+    #       intellij_plugins:
+    #         - CheckStyle-IDEA
+    #         - Lombook Plugin
 
-    # Install Go plugin for IntelliJ IDEA IDE
-    - role: gantsign.intellij-plugins
-      tags:
-        - java
-        - gui
-        - intellij
-        - golang
-      users:
-        - username: vagrant
-          intellij_plugins:
-            - ro.redeul.google.go
+    # # Install Go plugin for IntelliJ IDEA IDE
+    # - role: gantsign.intellij-plugins
+    #   tags:
+    #     - java
+    #     - gui
+    #     - intellij
+    #     - golang
+    #   users:
+    #     - username: "{{dev_user}}"
+    #       intellij_plugins:
+    #         - ro.redeul.google.go
 
-    # Add Maven extension to popup a GUI notification when builds finish
-    - role: gantsign.maven-notifier
-      tags:
-        - java
-        - maven
-        - gui
+    # # Add Maven extension to popup a GUI notification when builds finish
+    # - role: gantsign.maven-notifier
+    #   tags:
+    #     - java
+    #     - maven
+    #     - gui
 
     # Add items to DockbarX launcher
     - role: gantsign.pin-to-launcher
@@ -382,7 +413,7 @@
     # Configure general environment variables
     - role: franklinkim.environment
       environment_config:
-        CDPATH: ".:/home/vagrant/workspace:/home/vagrant/workspace-go/src/github.com/gantsign"
+        CDPATH: ".:/home/{{dev_user}}/workspace:/home/{{dev_user}}/workspace-go/src/github.com/gantsign"
         TREE_COLORS: ':no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.bat=01;32:*.BAT=01;32:*.btm=01;32:*.BTM=01;32:*.cmd=01;32:*.CMD=01;32:*.com=01;32:*.COM=01;32:*.dll=01;32:*.DLL=01;32:*.exe=01;32:*.EXE=01;32:*.arj=01;31:*.bz2=01;31:*.deb=01;31:*.gz=01;31:*.lzh=01;31:*.rpm=01;31:*.tar=01;31:*.taz=01;31:*.tb2=01;31:*.tbz2=01;31:*.tbz=01;31:*.tgz=01;31:*.tz2=01;31:*.z=01;31:*.Z=01;31:*.zip=01;31:*.ZIP=01;31:*.zoo=01;31:*.asf=01;35:*.ASF=01;35:*.avi=01;35:*.AVI=01;35:*.bmp=01;35:*.BMP=01;35:*.flac=01;35:*.FLAC=01;35:*.gif=01;35:*.GIF=01;35:*.jpg=01;35:*.JPG=01;35:*.jpeg=01;35:*.JPEG=01;35:*.m2a=01;35:*.M2a=01;35:*.m2v=01;35:*.M2V=01;35:*.mov=01;35:*.MOV=01;35:*.mp3=01;35:*.MP3=01;35:*.mpeg=01;35:*.MPEG=01;35:*.mpg=01;35:*.MPG=01;35:*.ogg=01;35:*.OGG=01;35:*.ppm=01;35:*.rm=01;35:*.RM=01;35:*.tga=01;35:*.TGA=01;35:*.tif=01;35:*.TIF=01;35:*.wav=01;35:*.WAV=01;35:*.wmv=01;35:*.WMV=01;35:*.xbm=01;35:*.xpm=01;35:'
 
     # Configure Java environment variables
@@ -392,24 +423,236 @@
       environment_config:
         JAVA_HOME: "{{ ansible_local.java.general.home }}"
 
-    # Configure Maven environment variable
-    - role: franklinkim.environment
-      tags:
-        - java
-        - maven
-      environment_config:
-        M2_HOME: "{{ ansible_local.maven.general.home }}"
+    # # Configure Maven environment variable
+    # - role: franklinkim.environment
+    #   tags:
+    #     - java
+    #     - maven
+    #   environment_config:
+    #     M2_HOME: "{{ ansible_local.maven.general.home }}"
 
-    # Install oh-my-zsh shell enhancements
-    - role: gantsign.oh-my-zsh
-      tags:
-        - oh-my-zsh
-      users:
-        - username: vagrant
-          oh_my_zsh:
-            theme: robbyrussell
-            plugins:
-              - command-not-found
-              - docker
-              - git
-              - mvn
+    # # Install oh-my-zsh shell enhancements
+    # - role: gantsign.oh-my-zsh
+    #   tags:
+    #     - oh-my-zsh
+    #   users:
+    #     - username: "{{dev_user}}"
+    #       oh_my_zsh:
+    #         theme: robbyrussell
+    #         plugins:
+    #           - command-not-found
+    #           - docker
+    #           - git
+    #           - mvn
+
+  tasks:
+
+    ##############################################################################
+    # Containers
+    - name: Install docker and docker-compose
+      tags: ['containers', 'docker'] 
+      action: apt pkg={{item}} state=latest
+      with_items:
+        - docker.io
+        - docker-compose
+
+    - name: Install portainer (docker web gui)
+      tags: ['containers', 'docker', 'portainer'] 
+      docker_container:
+        name: portainer
+        image: portainer/portainer
+        state: started
+        privileged: yes
+        ports:
+        - "9000:9000"
+        volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+
+    - name: Install LXD
+      tags: ['containers', 'lxd', 'lxc'] 
+      action: apt pkg={{item}} state=latest
+      with_items:
+        - lxd
+
+    - name: Add '{{dev_user}}' to the lxd group
+      tags: ['containers', 'lxd'] 
+      user:
+        name: "{{dev_user}}"
+        groups: lxd
+        append: yes
+
+    - name: Install Juju
+      tags: ['containers', 'juju', 'charm'] 
+      action: apt pkg={{item}} state=latest
+      with_items:
+        - juju
+        - charm
+        - charm-tools
+
+    #############################################################################
+    # Editors
+
+    # VIM ...
+    - name: Install VIM
+      tags: ['editors', 'vim'] 
+      action: apt pkg=vim state=latest
+
+    # SUBLIME TEXT ...
+
+    - name: Install Git
+      tags: ['editors', 'sublime', 'st3'] 
+      action: apt pkg=git state=latest
+
+    - name: Check to see if ST3 is already installed
+      tags: ['editors', 'sublime', 'st3'] 
+      stat:
+        path: /usr/bin/subl
+      register: st3_bin_result
+
+    - name: Install ST3
+      tags: ['editors', 'sublime', 'st3'] 
+      apt:
+        deb: https://download.sublimetext.com/sublime-text_build-3126_amd64.deb
+      when: st3_bin_result.stat.exists == False
+
+    - name: Creates ST3 config dir
+      tags: ['editors', 'sublime', 'st3'] 
+      file: 
+        path: "/home/{{dev_user}}/.config/{{item}}" 
+        state: directory
+        owner: "{{dev_user}}"
+        group: "{{dev_user}}"
+        mode: 0700
+      with_items:
+        - "sublime-text-3"
+        - "sublime-text-3/Installed Packages" 
+        - "sublime-text-3/Packages"
+        - "sublime-text-3/Packages/User" 
+
+    - name: Install Package Control Plugin
+      tags: ['editors', 'sublime', 'st3'] 
+      get_url:
+        url: https://packagecontrol.io/Package%20Control.sublime-package
+        dest: "/home/{{dev_user}}/.config/sublime-text-3/Installed Packages/Package Control.sublime-package"
+        mode: 0664
+
+    - name: Update ST3 Configs/Themes/Packages
+      tags: ['editors', 'sublime', 'st3'] 
+      copy:
+        src: "files/st3/{{item}}"
+        dest: "/home/{{dev_user}}/.config/sublime-text-3/Packages/User/"
+        owner: "{{dev_user}}"
+        group: "{{dev_user}}"
+        mode: 0664
+        force: no
+      with_items:
+        - "Package Control.sublime-settings"
+        - "Preferences.sublime-settings"
+        - "Terminal.sublime-settings"
+        - "SublimeLinter"
+
+    # BRACKETS
+    - name: Add Brackets Repo
+      tags: ['editors', 'brackets']
+      apt_repository:
+        repo: "ppa:webupd8team/brackets"
+
+    - name: Install Brackets
+      tags: ['editors', 'brackets'] 
+      action: apt pkg=brackets state=latest
+
+    ############################################################################
+    # Ubuntu tweaks
+
+    - name: Install misc. packages
+      tags: ['ubuntu', 'misc'] 
+      action: apt pkg={{item}} state=latest
+      with_items:
+        - unity-tweak-tool
+        - caffeine
+
+    - name: Install misc. packages
+      tags: ['ubuntu', 'terminator'] 
+      action: apt pkg={{item}} state=latest
+      with_items:
+        - terminator 
+
+    - name: Creates Terminator config dir
+      tags: ['ubuntu', 'terminator'] 
+      file: 
+        path: "/home/{{dev_user}}/.config/{{item}}" 
+        state: directory
+        owner: "{{dev_user}}"
+        group: "{{dev_user}}"
+        mode: 0700
+      with_items:
+        - terminator
+
+    - name: Update Terminator Config
+      tags: ['ubuntu', 'terminator'] 
+      copy:
+        src: "files/terminator/{{item}}"
+        dest: "/home/{{dev_user}}/.config/terminator/{{item}}"
+        owner: "{{dev_user}}"
+        group: "{{dev_user}}"
+        mode: 0664
+        force: no
+      with_items:
+        - config
+
+    - name: Owning dconf dir
+      tags: ['ubuntu', 'icons', 'gtk'] 
+      file: 
+        path: "{{item}}"
+        state: directory
+        owner: "{{dev_user}}"
+        group: "{{dev_user}}"
+        mode: 0700
+      with_items:
+        - "/home/{{dev_user}}/.cache/dconf" 
+        - "/home/{{dev_user}}/.dconf" 
+
+    - name: Installing Ubuntu Theme 
+      tags: ['ubuntu', 'theme', 'gtk'] 
+      unarchive:
+        src: "files/gtk-themes/Alex-Arc-Flatabulous-Darker.tar.gz"
+        dest: "/usr/share/themes/"
+      
+    # - name: Set GTK Theme
+    #   tags: ['ubuntu', 'theme', 'gtk'] 
+    #   become: true
+    #   become_user: "{{dev_user}}"
+    #   gsettings: 
+    #     schema: org.gnome.desktop.interface 
+    #     key: gtk-theme 
+    #     string: Alex-Arc-Flatabulous-Darker
+
+    - name: Add Numix Repo
+      tags: ['ubuntu', 'theme', 'gtk'] 
+      apt_repository:
+        repo: "ppa:numix/ppa"
+
+    - name: Install Numix packages
+      tags: ['ubuntu', 'theme', 'gtk'] 
+      action: apt pkg={{item}} state=latest
+      with_items:
+        - numix-icon-theme-circle
+        - numix-gtk-theme
+
+    # - name: Set GTK Icons
+    #   tags: ['ubuntu', 'theme', 'gtk'] 
+    #   become: true
+    #   become_user: "{{dev_user}}"
+    #   gsettings: 
+    #     schema: org.gnome.desktop.interface 
+    #     key: icon-theme 
+    #     string:  Numix-Circle
+
+    # - name: Clear Search Domains
+    #   tags: ['ubuntu', 'gtk'] 
+    #   become: true
+    #   become_user: "{{dev_user}}"
+    #   gsettings: 
+    #     schema: com.canonical.unity.webapps
+    #     key: preauthorized-domains
+    #     string: '[]'

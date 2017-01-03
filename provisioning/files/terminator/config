@@ -1,0 +1,172 @@
+[global_config]
+  inactive_color_offset = 1.0
+  suppress_multiple_term_dialog = True
+[keybindings]
+  close_term = <Primary><Shift>x
+  new_tab = <Primary>t
+  new_window = <Primary><Shift>t
+  split_horiz = <Primary><Shift>a
+  split_vert = <Primary><Shift>w
+[layouts]
+  [[default]]
+    [[[child1]]]
+      parent = window0
+      profile = default
+      type = Terminal
+    [[[window0]]]
+      parent = ""
+      type = Window
+  [[New Layout]]
+    [[[child0]]]
+      fullscreen = False
+      last_active_term = cf043d27-d6b2-42c1-92c3-f339d7ce6771
+      last_active_window = True
+      maximised = False
+      order = 0
+      parent = ""
+      position = 1996:33
+      size = 1873, 2087
+      title = wagoodman@kiwi: ~/excella/github/my-dev-box
+      type = Window
+    [[[child1]]]
+      order = 0
+      parent = child0
+      position = 542
+      ratio = 0.260900814566
+      type = VPaned
+    [[[child11]]]
+      order = 1
+      parent = child7
+      position = 934
+      ratio = 0.5
+      type = HPaned
+    [[[child14]]]
+      fullscreen = False
+      last_active_term = 73f5c56f-d1b7-4d63-a255-366937bb9843
+      last_active_window = False
+      maximised = False
+      order = 0
+      parent = ""
+      position = 19276:33
+      size = 1880, 2087
+      title = wagoodman@kiwi: ~/jhu/devops/swarm
+      type = Window
+    [[[child15]]]
+      order = 0
+      parent = child14
+      position = 710
+      ratio = 0.341399137518
+      type = VPaned
+    [[[child17]]]
+      order = 1
+      parent = child15
+      position = 706
+      ratio = 0.51639941691
+      type = VPaned
+    [[[child3]]]
+      order = 1
+      parent = child1
+      position = 549
+      ratio = 0.358116883117
+      type = VPaned
+    [[[child4]]]
+      order = 0
+      parent = child3
+      position = 934
+      ratio = 0.5
+      type = HPaned
+    [[[child7]]]
+      order = 1
+      parent = child3
+      position = 469
+      ratio = 0.478194726166
+      type = VPaned
+    [[[child8]]]
+      order = 0
+      parent = child7
+      position = 934
+      ratio = 0.5
+      type = HPaned
+    [[[terminal10]]]
+      order = 1
+      parent = child8
+      profile = default
+      type = Terminal
+      uuid = 6b581e96-ca79-40f4-a1eb-73de60be2e0b
+    [[[terminal12]]]
+      order = 0
+      parent = child11
+      profile = default
+      type = Terminal
+      uuid = 8ec51407-5f70-4831-bb08-960f9ab52c01
+    [[[terminal13]]]
+      order = 1
+      parent = child11
+      profile = default
+      type = Terminal
+      uuid = ab542041-d826-4824-b0b4-c4a375d3e88e
+    [[[terminal16]]]
+      order = 0
+      parent = child15
+      profile = default
+      type = Terminal
+      uuid = 2ac21899-109f-4ee8-ad35-ef5bdfe96c03
+    [[[terminal18]]]
+      order = 0
+      parent = child17
+      profile = default
+      type = Terminal
+      uuid = 73f5c56f-d1b7-4d63-a255-366937bb9843
+    [[[terminal19]]]
+      order = 1
+      parent = child17
+      profile = default
+      type = Terminal
+      uuid = 4909009e-8f38-4abd-a6b2-d3b7ab90e7b3
+    [[[terminal2]]]
+      order = 0
+      parent = child1
+      profile = light
+      type = Terminal
+      uuid = 04ccba86-7663-4107-9f6f-f72d0e1a2492
+    [[[terminal5]]]
+      order = 0
+      parent = child4
+      profile = default
+      type = Terminal
+      uuid = 628fb196-b727-4eff-9b6c-f0fd5d2d20ae
+    [[[terminal6]]]
+      order = 1
+      parent = child4
+      profile = default
+      type = Terminal
+      uuid = cf043d27-d6b2-42c1-92c3-f339d7ce6771
+    [[[terminal9]]]
+      order = 0
+      parent = child8
+      profile = default
+      type = Terminal
+      uuid = 34a8652f-67f6-4960-b3de-c879d8c8fee0
+[plugins]
+[profiles]
+  [[default]]
+    background_color = "#333333"
+    background_image = None
+    custom_command = lxc exec devbox bash
+    foreground_color = "#fff7a7"
+    scrollback_infinite = True
+  [[blue]]
+    background_color = "#002b36"
+    background_image = None
+    foreground_color = "#839496"
+    scrollback_infinite = True
+  [[devbox]]
+    background_image = None
+    custom_command = "lxc exec --mode=interactive devbox --  script -q /dev/null -c 'su - wagoodman'"
+    scrollback_infinite = True
+    use_custom_command = True
+  [[light]]
+    background_color = "#fdf6e3"
+    background_image = None
+    foreground_color = "#657b83"
+    scrollback_infinite = True

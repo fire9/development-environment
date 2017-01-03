@@ -1,0 +1,16 @@
+{
+        "color_scheme": "Packages/User/SublimeLinter/Agila Monokai Extended (SL).tmTheme",
+        "font_size": 12,
+        "translate_tabs_to_spaces": true,
+        "ignored_packages":
+        [
+                "Vintage"
+        ],
+        "rulers":
+        [
+                80
+        ],
+        "tab_size": 2,
+        "theme": "Agila Monokai.sublime-theme"
+}
+

@@ -1,0 +1,41 @@
+{
+	"bootstrapped": true,
+	"in_process_packages":
+	[
+	],
+	"installed_packages":
+	[
+		"Agila Theme",
+		"Alignment",
+		"All Autocomplete",
+		"AutoFileName",
+		"Boxy Theme",
+		"BracketHighlighter",
+		"Color Highlighter",
+		"ColorPicker",
+		"Compare Side-By-Side",
+		"ERB Autocomplete",
+		"Git",
+		"GitGutter",
+		"Markdown Extended",
+		"Markdown Preview",
+		"MarkdownEditing",
+		"Package Control",
+		"PackageResourceViewer",
+		"RuboCop",
+		"SideBarEnhancements",
+		"StyleToken",
+		"SublimeCodeIntel",
+		"SublimeERB",
+		"SublimeLinter",
+		"SublimeLinter-coffee",
+		"SublimeLinter-csslint",
+		"SublimeLinter-json",
+		"SublimeLinter-pep8",
+		"SublimeLinter-rubocop",
+		"SublimeREPL",
+		"Terminal",
+		"Theme - Centurion",
+		"Theme - Lanzhou"
+	]
+}

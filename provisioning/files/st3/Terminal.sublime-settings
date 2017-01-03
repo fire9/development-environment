@@ -1,0 +1,4 @@
+{
+	"terminal": "/usr/bin/terminator",
+	"parameters": ["--new-tab"]
+}
