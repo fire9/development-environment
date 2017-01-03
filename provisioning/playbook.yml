@@ -656,3 +656,9 @@
     #     schema: com.canonical.unity.webapps
     #     key: preauthorized-domains
     #     string: '[]'
+
+    - name: Oh yeah... ensure there is a desktop
+      tags: ['ubuntu', 'unity', 'desktop'] 
+      action: apt pkg={{item}} state=latest
+      with_items:
+        - ubnutu-desktop
