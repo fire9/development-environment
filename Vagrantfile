@@ -4,7 +4,7 @@
 # ansible_local requires version >= 1.8.4 to work stably
 Vagrant.require_version '>= 1.8.4'
 
-required_plugins = %w(vagrant-reload vagrant-persistent-storage vagrant-triggers vagrant-vbguest vagrant-proxyconf nugrant vagrant-veertu)
+required_plugins = %w(vagrant-reload vagrant-persistent-storage vagrant-triggers vagrant-vbguest vagrant-proxyconf nugrant)
 plugins_to_install = required_plugins.select { |plugin| !Vagrant.has_plugin? plugin }
 unless plugins_to_install.empty?
   puts "Installing plugins: #{plugins_to_install.join(' ')}"
