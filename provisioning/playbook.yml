@@ -56,6 +56,78 @@
         - numpy
         - requests
 
+    #############################################################################
+    # Editors
+
+    # VIM ...
+    - name: Install VIM
+      tags: ['editors', 'vim'] 
+      action: apt pkg=vim state=latest
+
+    # SUBLIME TEXT ...
+
+    - name: Install Git
+      tags: ['editors', 'sublime', 'st3'] 
+      action: apt pkg=git state=latest
+
+    - name: Check to see if ST3 is already installed
+      tags: ['editors', 'sublime', 'st3'] 
+      stat:
+        path: /usr/bin/subl
+      register: st3_bin_result
+
+    - name: Install ST3
+      tags: ['editors', 'sublime', 'st3'] 
+      apt:
+        deb: https://download.sublimetext.com/sublime-text_build-3126_amd64.deb
+      when: st3_bin_result.stat.exists == False
+
+    - name: Creates ST3 config dir
+      tags: ['editors', 'sublime', 'st3'] 
+      file: 
+        path: "/home/{{dev_user}}/.config/{{item}}" 
+        state: directory
+        owner: "{{dev_user}}"
+        group: "{{dev_user}}"
+        mode: 0700
+      with_items:
+        - "sublime-text-3"
+        - "sublime-text-3/Installed Packages" 
+        - "sublime-text-3/Packages"
+        - "sublime-text-3/Packages/User" 
+
+    - name: Install Package Control Plugin
+      tags: ['editors', 'sublime', 'st3'] 
+      get_url:
+        url: https://packagecontrol.io/Package%20Control.sublime-package
+        dest: "/home/{{dev_user}}/.config/sublime-text-3/Installed Packages/Package Control.sublime-package"
+        mode: 0664
+
+    - name: Update ST3 Configs/Themes/Packages
+      tags: ['editors', 'sublime', 'st3'] 
+      copy:
+        src: "files/st3/{{item}}"
+        dest: "/home/{{dev_user}}/.config/sublime-text-3/Packages/User/"
+        owner: "{{dev_user}}"
+        group: "{{dev_user}}"
+        mode: 0664
+        force: no
+      with_items:
+        - "Package Control.sublime-settings"
+        - "Preferences.sublime-settings"
+        - "Terminal.sublime-settings"
+        - "SublimeLinter"
+
+    # BRACKETS
+    - name: Add Brackets Repo
+      tags: ['editors', 'brackets']
+      apt_repository:
+        repo: "ppa:webupd8team/brackets"
+
+    - name: Install Brackets
+      tags: ['editors', 'brackets'] 
+      action: apt pkg=brackets state=latest
+
   roles:
     # Preserve the apt cache
     - role: gantsign.apt
@@ -400,6 +472,8 @@
         - application: gitkraken.desktop
         - application: Postman.desktop
         - application: atom.desktop
+        - application: sublime_text.desktop
+        - application: brackets.desktop
         - application: code.desktop
         - application: "{{ ansible_local.intellij.general.desktop_filename if (ansible_local is defined and ansible_local.intellij is defined) else omit }}"
         - application: ubuntu-software-center.desktop
@@ -488,78 +562,6 @@
         - juju
         - charm
         - charm-tools
-
-    #############################################################################
-    # Editors
-
-    # VIM ...
-    - name: Install VIM
-      tags: ['editors', 'vim'] 
-      action: apt pkg=vim state=latest
-
-    # SUBLIME TEXT ...
-
-    - name: Install Git
-      tags: ['editors', 'sublime', 'st3'] 
-      action: apt pkg=git state=latest
-
-    - name: Check to see if ST3 is already installed
-      tags: ['editors', 'sublime', 'st3'] 
-      stat:
-        path: /usr/bin/subl
-      register: st3_bin_result
-
-    - name: Install ST3
-      tags: ['editors', 'sublime', 'st3'] 
-      apt:
-        deb: https://download.sublimetext.com/sublime-text_build-3126_amd64.deb
-      when: st3_bin_result.stat.exists == False
-
-    - name: Creates ST3 config dir
-      tags: ['editors', 'sublime', 'st3'] 
-      file: 
-        path: "/home/{{dev_user}}/.config/{{item}}" 
-        state: directory
-        owner: "{{dev_user}}"
-        group: "{{dev_user}}"
-        mode: 0700
-      with_items:
-        - "sublime-text-3"
-        - "sublime-text-3/Installed Packages" 
-        - "sublime-text-3/Packages"
-        - "sublime-text-3/Packages/User" 
-
-    - name: Install Package Control Plugin
-      tags: ['editors', 'sublime', 'st3'] 
-      get_url:
-        url: https://packagecontrol.io/Package%20Control.sublime-package
-        dest: "/home/{{dev_user}}/.config/sublime-text-3/Installed Packages/Package Control.sublime-package"
-        mode: 0664
-
-    - name: Update ST3 Configs/Themes/Packages
-      tags: ['editors', 'sublime', 'st3'] 
-      copy:
-        src: "files/st3/{{item}}"
-        dest: "/home/{{dev_user}}/.config/sublime-text-3/Packages/User/"
-        owner: "{{dev_user}}"
-        group: "{{dev_user}}"
-        mode: 0664
-        force: no
-      with_items:
-        - "Package Control.sublime-settings"
-        - "Preferences.sublime-settings"
-        - "Terminal.sublime-settings"
-        - "SublimeLinter"
-
-    # BRACKETS
-    - name: Add Brackets Repo
-      tags: ['editors', 'brackets']
-      apt_repository:
-        repo: "ppa:webupd8team/brackets"
-
-    - name: Install Brackets
-      tags: ['editors', 'brackets'] 
-      action: apt pkg=brackets state=latest
 
     ############################################################################
     # Ubuntu tweaks
