@@ -4,7 +4,7 @@
 
   vars:
     x_ansible_download_dir: /usr/local/src/ansible/data
-    dev_user: vagrant 
+    dev_user: wagoodman 
 
   pre_tasks:
     - name: update apt cache
@@ -118,15 +118,15 @@
         - "Terminal.sublime-settings"
         - "SublimeLinter"
 
-    # BRACKETS
-    - name: Add Brackets Repo
-      tags: ['editors', 'brackets']
-      apt_repository:
-        repo: "ppa:webupd8team/brackets"
-
-    - name: Install Brackets
-      tags: ['editors', 'brackets'] 
-      action: apt pkg=brackets state=latest
+#    # BRACKETS
+#    - name: Add Brackets Repo
+#      tags: ['editors', 'brackets']
+#      apt_repository:
+#        repo: "ppa:webupd8team/brackets"
+#
+#    - name: Install Brackets
+#      tags: ['editors', 'brackets'] 
+#      action: apt pkg=brackets state=latest
 
   roles:
     # Preserve the apt cache
@@ -138,45 +138,45 @@
     - role: gantsign.inotify
       inotify_max_user_watches: 524288
 
-    # Synchronize files/directories between client and host
-    - role: gantsign.unison
-      tags:
-        - unison
-      unison_include_directories:
-        - .ssh
-        - .gnupg
-        - .m2
-        - .gitkraken
-        - .atom
-        - .config/Code
-        - .config/Postman
-        - .local/share/keyrings
-        - workspace
-        - workspace-go
-      unison_include_files:
-        - .bash_history
-        - .zsh_history
-        - .gitconfig
-      unison_ignore_paths:
-        - Path .ssh/authorized_keys
-        - Path .gnupg/S.gpg-agent
-        - BelowPath .m2/repository
-        - BelowPath .m2/wrapper
-        - BelowPath .atom/.apm
-        - BelowPath .atom/.node-gyp
-        - BelowPath .atom/compile-cache
-        - BelowPath .atom/packages
-        - BelowPath .atom/storage
-        - Name target
-        - Name Cache
-        - Name GPUCache
-        - Name bin
-        - Name .bin
-        - Name node_modules
-      unison_src_root: "/home/{{dev_user}}"
-      unison_mirror_root: "/var/persistent/home/{{dev_user}}"
-      unison_fat: no
-      unison_service_auto_start: yes
+#    # Synchronize files/directories between client and host
+#    - role: gantsign.unison
+#      tags:
+#        - unison
+#      unison_include_directories:
+#        - .ssh
+#        - .gnupg
+#        - .m2
+#        - .gitkraken
+#        - .atom
+#        - .config/Code
+#        - .config/Postman
+#        - .local/share/keyrings
+#        - workspace
+#        - workspace-go
+#      unison_include_files:
+#        - .bash_history
+#        - .zsh_history
+#        - .gitconfig
+#      unison_ignore_paths:
+#        - Path .ssh/authorized_keys
+#        - Path .gnupg/S.gpg-agent
+#        - BelowPath .m2/repository
+#        - BelowPath .m2/wrapper
+#        - BelowPath .atom/.apm
+#        - BelowPath .atom/.node-gyp
+#        - BelowPath .atom/compile-cache
+#        - BelowPath .atom/packages
+#        - BelowPath .atom/storage
+#        - Name target
+#        - Name Cache
+#        - Name GPUCache
+#        - Name bin
+#        - Name .bin
+#        - Name node_modules
+#      unison_src_root: "/home/{{dev_user}}"
+#      unison_mirror_root: "/var/persistent/home/{{dev_user}}"
+#      unison_fat: no
+#      unison_service_auto_start: yes
 
     # Enable compressed RAM swap
     - gantsign.zram-config
@@ -203,72 +203,72 @@
       docker_group_members:
         - "{{dev_user}}"
 
-    # Install Kubernetes
-    - role: gantsign.kubernetes
-      tags:
-        - kubernetes
-        - docker
-      kubernetes_node_type: admin
+#    # Install Kubernetes
+#    - role: gantsign.kubernetes
+#      tags:
+#        - kubernetes
+#        - docker
+#      kubernetes_node_type: admin
 
-    # Install Molecule for testing Ansible roles & playbooks
-    - role: gantsign.molecule
-      tags:
-        - docker
-        - molecule
+#    # Install Molecule for testing Ansible roles & playbooks
+#    - role: gantsign.molecule
+#      tags:
+#        - docker
+#        - molecule
 
-    # Install Java JDK
-    - role: gantsign.java
-      tags:
-        - java
-      java_version: 8u112
+#    # Install Java JDK
+#    - role: gantsign.java
+#      tags:
+#        - java
+#      java_version: 8u112
 
-    # Install Maven
-    - role: gantsign.maven
-      tags:
-        - java
-        - maven
-      maven_version: '3.3.9'
+#    # Install Maven
+#    - role: gantsign.maven
+#      tags:
+#        - java
+#        - maven
+#      maven_version: '3.3.9'
 
-    # Add Maven extension to colorize Maven output
-    - role: gantsign.maven-color
-      tags:
-        - java
-        - maven
+#    # Add Maven extension to colorize Maven output
+#    - role: gantsign.maven-color
+#      tags:
+#        - java
+#        - maven
 
-    # Add Node.js
-    - role: geerlingguy.nodejs
-      tags:
-        - nodejs
-      nodejs_version: 6.x
-      nodejs_install_npm_user: "{{dev_user}}"
-      nodejs_npm_global_packages:
-        - name: grunt-cli
-        - name: grunt-init
+#    # Add Node.js
+#    - role: geerlingguy.nodejs
+#      tags:
+#        - nodejs
+#      nodejs_version: 6.x
+#      nodejs_install_npm_user: "{{dev_user}}"
+#      nodejs_npm_global_packages:
+#        - name: grunt-cli
+#        - name: grunt-init
 
-    # Install Go language SDK
-    - role: gantsign.golang
-      tags:
-        - golang
-      golang_gopath: '$HOME/workspace-go'
+#    # Install Go language SDK
+#    - role: gantsign.golang
+#      tags:
+#        - golang
+#      golang_gopath: '$HOME/workspace-go'
 
-    # Enable audio support
-    - role: gantsign.audio
-      tags:
-        - gui
-      audio_users:
-        - "{{dev_user}}"
+#    # Enable audio support
+#    - role: gantsign.audio
+#      tags:
+#        - gui
+#      audio_users:
+#        - "{{dev_user}}"
 
-    # Install Xfce desktop
-    - role: gantsign.xdesktop
-      xdesktop_desktop: unity
-      tags:
-        - gui
+#    # Install Xfce desktop
+#    - role: gantsign.xdesktop
+#      xdesktop_desktop: unity
+#      tags:
+#        - gui
 
-    # Auto-login to X desktop
-    - role: gantsign.lightdm
-      tags:
-        - gui
-      lightdm_autologin_user: "{{dev_user}}"
+#    # Auto-login to X desktop
+#    - role: gantsign.lightdm
+#      tags:
+#        - gui
+#      lightdm_autologin_user: "{{dev_user}}"
 
     # Configure proxy settings for Gnome applications
     - role: gantsign.gnome-proxy
@@ -281,20 +281,20 @@
     #   tags:
     #     - gui
 
-    # Install Google Chrome web broswer
-    - role: cmprescott.chrome
-      tags:
-        - gui
-        - chrome
+#    # Install Google Chrome web broswer
+#    - role: cmprescott.chrome
+#      tags:
+#        - gui
+#        - chrome
 
-    # Set the default web browser
-    # This is only a partial solution as Google Chrome will still ask if you
-    # want to make it the default browser when it first runs.
-    - role: gantsign.default-web-browser
-      tags:
-        - gui
-        - chrome
-      default_web_browser: google-chrome
+#    # Set the default web browser
+#    # This is only a partial solution as Google Chrome will still ask if you
+#    # want to make it the default browser when it first runs.
+#    - role: gantsign.default-web-browser
+#      tags:
+#        - gui
+#        - chrome
+#      default_web_browser: google-chrome
 
     # Install GitKraken
     - role: gantsign.gitkraken
@@ -302,11 +302,11 @@
         - gui
         - gitkraken
 
-    # Install Postman HTTP tool
-    - role: gantsign.postman
-      tags:
-        - gui
-        - postman
+#    # Install Postman HTTP tool
+#    - role: gantsign.postman
+#      tags:
+#        - gui
+#        - postman
 
     # Install Atom editor
     - role: gantsign.atom
@@ -329,16 +329,16 @@
                 showIndentGuide: true
                 showInvisibles: true
 
-    # Install Go package for Atom
-    - role: gantsign.atom-packages
-      tags:
-        - gui
-        - atom
-        - golang
-      users:
-        - username: "{{dev_user}}"
-          atom_packages:
-            - go-plus
+#    # Install Go package for Atom
+#    - role: gantsign.atom-packages
+#      tags:
+#        - gui
+#        - atom
+#        - golang
+#      users:
+#        - username: "{{dev_user}}"
+#          atom_packages:
+#            - go-plus
 
     # # Install Visual Studio Code editor
     # - role: gantsign.visual-studio-code
@@ -456,33 +456,33 @@
     #     - maven
     #     - gui
 
-    # Add items to DockbarX launcher
-    - role: gantsign.pin-to-launcher
-      tags:
-        - gui
-      pin_to_launcher: unity
-      pin_to_launcher_favorites:
-        - application: ubiquity.desktop
-          when_desktop: unity
-        - application: terminator.desktop
-        - application: org.gnome.Nautilus.desktop
-          when_desktop: unity
-        - application: Thunar.desktop
-        - application: google-chrome.desktop
-        - application: gitkraken.desktop
-        - application: Postman.desktop
-        - application: atom.desktop
-        - application: sublime_text.desktop
-        - application: brackets.desktop
-        - application: code.desktop
-        - application: "{{ ansible_local.intellij.general.desktop_filename if (ansible_local is defined and ansible_local.intellij is defined) else omit }}"
-        - application: ubuntu-software-center.desktop
-          when_desktop: unity
-        - application: unity-control-center.desktop
-          when_desktop: unity
-        - unity: running-apps
-        - unity: expo-icon
-        - unity: devices
+#    # Add items to DockbarX launcher
+#    - role: gantsign.pin-to-launcher
+#      tags:
+#        - gui
+#      pin_to_launcher: unity
+#      pin_to_launcher_favorites:
+#        - application: ubiquity.desktop
+#          when_desktop: unity
+#        - application: terminator.desktop
+#        - application: org.gnome.Nautilus.desktop
+#          when_desktop: unity
+#        - application: Thunar.desktop
+#        - application: google-chrome.desktop
+#        - application: gitkraken.desktop
+#        - application: Postman.desktop
+#        - application: atom.desktop
+#        - application: sublime_text.desktop
+#        - application: brackets.desktop
+#        - application: code.desktop
+#        - application: "{{ ansible_local.intellij.general.desktop_filename if (ansible_local is defined and ansible_local.intellij is defined) else omit }}"
+#        - application: ubuntu-software-center.desktop
+#          when_desktop: unity
+#        - application: unity-control-center.desktop
+#          when_desktop: unity
+#        - unity: running-apps
+#        - unity: expo-icon
+#        - unity: devices
 
     # Configure general environment variables
     - role: franklinkim.environment
@@ -490,12 +490,12 @@
         CDPATH: ".:/home/{{dev_user}}/workspace:/home/{{dev_user}}/workspace-go/src/github.com/gantsign"
         TREE_COLORS: ':no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.bat=01;32:*.BAT=01;32:*.btm=01;32:*.BTM=01;32:*.cmd=01;32:*.CMD=01;32:*.com=01;32:*.COM=01;32:*.dll=01;32:*.DLL=01;32:*.exe=01;32:*.EXE=01;32:*.arj=01;31:*.bz2=01;31:*.deb=01;31:*.gz=01;31:*.lzh=01;31:*.rpm=01;31:*.tar=01;31:*.taz=01;31:*.tb2=01;31:*.tbz2=01;31:*.tbz=01;31:*.tgz=01;31:*.tz2=01;31:*.z=01;31:*.Z=01;31:*.zip=01;31:*.ZIP=01;31:*.zoo=01;31:*.asf=01;35:*.ASF=01;35:*.avi=01;35:*.AVI=01;35:*.bmp=01;35:*.BMP=01;35:*.flac=01;35:*.FLAC=01;35:*.gif=01;35:*.GIF=01;35:*.jpg=01;35:*.JPG=01;35:*.jpeg=01;35:*.JPEG=01;35:*.m2a=01;35:*.M2a=01;35:*.m2v=01;35:*.M2V=01;35:*.mov=01;35:*.MOV=01;35:*.mp3=01;35:*.MP3=01;35:*.mpeg=01;35:*.MPEG=01;35:*.mpg=01;35:*.MPG=01;35:*.ogg=01;35:*.OGG=01;35:*.ppm=01;35:*.rm=01;35:*.RM=01;35:*.tga=01;35:*.TGA=01;35:*.tif=01;35:*.TIF=01;35:*.wav=01;35:*.WAV=01;35:*.wmv=01;35:*.WMV=01;35:*.xbm=01;35:*.xpm=01;35:'
 
-    # Configure Java environment variables
-    - role: franklinkim.environment
-      tags:
-        - java
-      environment_config:
-        JAVA_HOME: "{{ ansible_local.java.general.home }}"
+#    # Configure Java environment variables
+#    - role: franklinkim.environment
+#      tags:
+#        - java
+#      environment_config:
+#        JAVA_HOME: "{{ ansible_local.java.general.home }}"
 
     # # Configure Maven environment variable
     # - role: franklinkim.environment
@@ -523,24 +523,24 @@
 
     ##############################################################################
     # Containers
-    - name: Install docker and docker-compose
-      tags: ['containers', 'docker'] 
-      action: apt pkg={{item}} state=latest
-      with_items:
-        - docker.io
-        - docker-compose
+#    - name: Install docker and docker-compose
+#      tags: ['containers', 'docker'] 
+#      action: apt pkg={{item}} state=latest
+#      with_items:
+#        - docker.io
+#        - docker-compose
 
-    - name: Install portainer (docker web gui)
-      tags: ['containers', 'docker', 'portainer'] 
-      docker_container:
-        name: portainer
-        image: portainer/portainer
-        state: started
-        privileged: yes
-        ports:
-        - "9000:9000"
-        volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
+#    - name: Install portainer (docker web gui)
+#      tags: ['containers', 'docker', 'portainer'] 
+#      docker_container:
+#        name: portainer
+#        image: portainer/portainer
+#        state: started
+#        privileged: yes
+#        ports:
+#        - "9000:9000"
+#        volumes:
+#        - /var/run/docker.sock:/var/run/docker.sock
 
     - name: Install LXD
       tags: ['containers', 'lxd', 'lxc'] 
@@ -555,13 +555,13 @@
         groups: lxd
         append: yes
 
-    - name: Install Juju
-      tags: ['containers', 'juju', 'charm'] 
-      action: apt pkg={{item}} state=latest
-      with_items:
-        - juju
-        - charm
-        - charm-tools
+#    - name: Install Juju
+#      tags: ['containers', 'juju', 'charm'] 
+#      action: apt pkg={{item}} state=latest
+#      with_items:
+#        - juju
+#        - charm
+#        - charm-tools
 
     ############################################################################
     # Ubuntu tweaks
@@ -659,12 +659,12 @@
     #     key: preauthorized-domains
     #     string: '[]'
 
-    - name: Oh yeah... ensure there is a desktop
-      tags: ['ubuntu', 'unity', 'desktop'] 
-      action: apt pkg={{item}} state=latest
-      with_items:
-        - ubuntu-desktop
-        - indicator-appmenu
-        - hud
-        - indicator-session
-        - unity-lens-files
+#    - name: Oh yeah... ensure there is a desktop
+#      tags: ['ubuntu', 'unity', 'desktop'] 
+#      action: apt pkg={{item}} state=latest
+#      with_items:
+#        - ubuntu-desktop
+#        - indicator-appmenu
+#        - hud
+#        - indicator-session
+#        - unity-lens-files
